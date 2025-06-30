@@ -1,0 +1,95 @@
+/* Глобальные стили для всей страницы */
+body {
+    /* Используем переменные цвета от Telegram для идеальной интеграции. */
+    /* Для простоты теста в браузере пока используем свои цвета. */
+    background-color: #18222d; /* var(--tg-theme-bg-color); */
+    color: #ffffff; /* var(--tg-theme-text-color); */
+    
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Контейнер, который центрирует весь наш контент */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+header h1 {
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+header .subtitle {
+    font-size: 16px;
+    color: #a9b3be; /* var(--tg-theme-hint-color); */
+    margin-top: 0;
+}
+
+/* Секция с карточками метрик */
+.metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Расстояние между карточками */
+    margin-bottom: 30px;
+}
+
+/* Стили для каждой отдельной карточки */
+.card {
+    background-color: #222e3a; /* var(--tg-theme-secondary-bg-color); */
+    border-radius: 12px;
+    padding: 20px;
+    flex-grow: 1; /* Карточки будут растягиваться, чтобы занять все место */
+    min-width: 150px; /* Минимальная ширина карточки */
+    text-align: center;
+}
+
+.card h2 {
+    margin-top: 0;
+    font-size: 16px;
+    color: #a9b3be; /* var(--tg-theme-hint-color); */
+}
+
+.card p {
+    margin-bottom: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Стили для секций с AI-анализом и графиком */
+.ai-analysis, .chart-container {
+    background-color: #222e3a; /* var(--tg-theme-secondary-bg-color); */
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.ai-analysis h2, .chart-container h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .metrics {
+        flex-direction: column; /* На маленьких экранах карточки будут друг под другом */
+    }
+}
+#refresh-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: transform 0.3s ease;
+}
+
+#refresh-button:active {
+    transform: rotate(180deg);
+}

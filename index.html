@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Таргетолог Дашборд</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Аналитический дашборд</h1>
+            <button id="refresh-button">🔄</button> <p class="subtitle">Отчет за <span id="report-date">...</span></p>
+        </header>
+
+        <main>
+            <section class="metrics">
+                <div class="card">
+                    <h2>Потрачено</h2>
+                    <p><span id="spend-value">...</span> $</p>
+                </div>
+                <div class="card">
+                    <h2>Клики</h2>
+                    <p id="clicks-value">...</p>
+                </div>
+                <div class="card">
+                    <h2>CTR</h2>
+                    <p><span id="ctr-value">...</span> %</p>
+                </div>
+                <div class="card">
+                    <h2>CPC</h2>
+                    <p><span id="cpc-value">...</span> $</p>
+                </div>
+            </section>
+
+            <section class="ai-analysis">
+                <h2>🤖 Рекомендация от AI</h2>
+                <p id="ai-recommendation">Загрузка рекомендаций...</p>
+            </section>
+
+            <section class="chart-container">
+                <h2>Динамика расходов (7 дней)</h2>
+                <canvas id="spend-chart"></canvas>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
