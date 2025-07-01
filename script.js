@@ -1,5 +1,5 @@
 // Ссылка на нашу функцию-посредника на Netlify
-const webhookUrl = '/.netlify/functions/get-data';
+const webhookUrl = 'https://4e2b-79-142-52-91.ngrok-free.app/webhook/a5cc6752-9c0c-43e8-ace4-0fe719d815df';
 
 document.addEventListener('DOMContentLoaded', () => {
     Telegram.WebApp.ready();
