@@ -37,6 +37,8 @@ function updateDashboard(data) {
         document.getElementById('ai-recommendation').innerText = data.ai_analysis;
     }
 }
-
-// Функцию renderChart можно пока закомментировать или удалить, мы вернем ее позже
-/* function renderChart(historyData) { ... } */
+function showError(message) {
+    const statusElement = document.getElementById('ai-recommendation');
+    statusElement.innerText = message;
+    document.querySelector('.metrics').style.opacity = '1';
+}
