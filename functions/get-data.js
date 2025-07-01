@@ -1,30 +1,41 @@
-// Переименовали переменную для ясности
-const N8N_WEBHOOK_URL = 'https://4e2b-79-142-52-91.ngrok-free.app/webhook/aa605d00-b426-4c4a-8c0a-4b83dd6dde45';
+/*
+ * Файл: /functions/get-data.js
+ * Этот код будет выполняться на серверах Netlify,
+ * он получает запрос от вашего приложения и перенаправляет его в n8n.
+ */
+
+// 👇 ВАША ГЛАВНАЯ ССЫЛКА. Вставьте сюда Production URL из вашего n8n.
+const N8N_PRODUCTION_WEBHOOK_URL = 'СЮhttp://localhost:5678/webhook/aa605d00-b426-4c4a-8c0a-4b83dd6dde45';
 
 exports.handler = async function(event, context) {
     try {
-        // Отправляем POST-запрос в n8n, чтобы запустить сценарий
-        const response = await fetch(N8N_WEBHOOK_URL, { method: 'POST' });
+        // Отправляем запрос в n8n, чтобы запустить сценарий
+        const response = await fetch(N8N_PRODUCTION_WEBHOOK_URL, { 
+            method: 'POST', 
+            body: JSON.stringify({}) // Отправляем пустой JSON, как требует Webhook
+        });
 
         if (!response.ok) {
-            // Если n8n вернул ошибку, логируем ее
-            console.error(`n8n webhook call failed with status: ${response.status}`);
-            return { statusCode: response.status, body: response.statusText };
+            console.error(`Ошибка от n8n: ${response.status}`);
+            return { statusCode: response.status, body: `Ошибка на стороне сервера n8n: ${response.statusText}` };
         }
 
-        // Получаем JSON-ответ от n8n
+        // Получаем данные от n8n
         const data = await response.json();
 
-        // Отправляем данные обратно в веб-приложение
+        // Отправляем данные в ваше приложение в Telegram
         return {
             statusCode: 200,
+            headers: {
+                "Content-Type": "application/json"
+            },
             body: JSON.stringify(data)
         };
     } catch (error) {
-        console.error('Error fetching from n8n webhook:', error);
+        console.error('Критическая ошибка функции-посредника:', error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: 'Internal error while fetching data.' })
+            body: JSON.stringify({ error: 'Внутренняя ошибка сервера при запросе данных.' })
         };
     }
 };
