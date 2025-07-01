@@ -5,7 +5,7 @@
  */
 
 // 👇 ВАША ГЛАВНАЯ ССЫЛКА. Вставьте сюда Production URL из вашего n8n.
-const N8N_PRODUCTION_WEBHOOK_URL = 'СЮhttp://localhost:5678/webhook/aa605d00-b426-4c4a-8c0a-4b83dd6dde45';
+const N8N_PRODUCTION_WEBHOOK_URL = 'http://localhost:5678/webhook/aa605d00-b426-4c4a-8c0a-4b83dd6dde45';
 
 exports.handler = async function(event, context) {
     try {
