@@ -1,5 +1,5 @@
 exports.handler = async function(event, context) {
-    const MAKE_WEBHOOK_URL = 'https://4e2b-79-142-52-91.ngrok-free.app/webhook/a5cc6752-9c0c-43e8-ace4-0fe719d815df';
+    const MAKE_WEBHOOK_URL = 'https://4e2b-79-142-52-91.ngrok-free.app/webhook/aa605d00-b426-4c4a-8c0a-4b83dd6dde45';
 
     try {
         const response = await fetch(MAKE_WEBHOOK_URL, { method: 'POST' });
