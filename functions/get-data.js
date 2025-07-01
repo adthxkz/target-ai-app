@@ -1,5 +1,5 @@
 exports.handler = async function(event, context) {
-    const MAKE_WEBHOOK_URL = 'http://localhost:5678/webhook-test/a5cc6752-9c0c-43e8-ace4-0fe719d815df';
+    const MAKE_WEBHOOK_URL = 'http://localhost:5678/webhook/a5cc6752-9c0c-43e8-ace4-0fe719d815df';
 
     try {
         const response = await fetch(MAKE_WEBHOOK_URL, { method: 'POST' });
