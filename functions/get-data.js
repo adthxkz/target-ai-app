@@ -1,7 +1,7 @@
 // Финальный код для /functions/get-data.js
 
 // 👇 Убедитесь, что сюда вставлена ваша рабочая (Production) ссылка из n8n
-const N8N_PRODUCTION_WEBHOOK_URL = 'http://localhost:5678/webhook/aa605d00-b426-4c4a-8c0a-4b83dd6dde45';
+const N8N_PRODUCTION_WEBHOOK_URL = 'https://4e2b-79-142-52-91.ngrok-free.app/webhook/aa605d00-b426-4c4a-8c0a-4b83dd6dde45';
 
 exports.handler = async function(event, context) {
     try {
