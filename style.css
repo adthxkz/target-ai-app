@@ -30,12 +30,39 @@
     font-weight: 600;
 }
 
-/* Старое правило для мобильных устройств можно закомментировать или удалить,
-   чтобы сетка 2x2 сохранялась и на небольших экранах. */
-/*
-@media (max-width: 768px) {
-    .metrics {
-        flex-direction: column;
-    }
+/* --- Стили для вкладок --- */
+.tabs-nav {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    overflow-x: auto; /* Горизонтальный скролл, если вкладок много */
+    padding-bottom: 10px;
 }
-*/
+
+.tab-button {
+    padding: 10px 15px;
+    border: 1px solid #3e4f60;
+    background-color: transparent;
+    color: #a9b3be;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap; /* Текст на кнопке не переносится */
+    transition: all 0.2s ease;
+}
+
+.tab-button.active {
+    background-color: #5288c1; /* Цвет активной вкладки */
+    color: #ffffff;
+    border-color: #5288c1;
+}
+
+.tab-content {
+    display: none; /* Прячем все панели по умолчанию */
+}
+
+.tab-content.active {
+    display: block; /* Показываем только активную */
+}
