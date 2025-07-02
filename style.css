@@ -1,68 +1,169 @@
-/* Секция с карточками метрик */
-.metrics {
-    display: flex;
-    flex-wrap: wrap; /* Разрешаем перенос на новую строку */
-    gap: 15px;       /* Расстояние между карточками */
-    margin-bottom: 30px;
+/* =================================
+   Глобальные стили и переменные
+   ================================= */
+:root {
+    /* Фоллбэк-цвета для тестирования в обычном браузере */
+    --fallback-bg-color: #18222d;
+    --fallback-text-color: #ffffff;
+    --fallback-hint-color: #a9b3be;
+    --fallback-button-color: #5288c1;
+    --fallback-button-text-color: #ffffff;
+    --fallback-secondary-bg-color: #222e3a;
+
+    /* Используем переменные цвета от Telegram, если они доступны */
+    --main-bg-color: var(--tg-theme-bg-color, var(--fallback-bg-color));
+    --main-text-color: var(--tg-theme-text-color, var(--fallback-text-color));
+    --main-hint-color: var(--tg-theme-hint-color, var(--fallback-hint-color));
+    --main-button-color: var(--tg-theme-button-color, var(--fallback-button-color));
+    --main-button-text-color: var(--tg-theme-button-text-color, var(--fallback-button-text-color));
+    --main-secondary-bg-color: var(--tg-theme-secondary-bg-color, var(--fallback-secondary-bg-color));
 }
 
-/* Стили для каждой отдельной карточки */
-.card {
-    background-color: #222e3a; /* var(--tg-theme-secondary-bg-color); */
-    border-radius: 12px;
-    padding: 15px;
-    text-align: center;
-    
-    /* Новая логика для создания сетки 2x2 */
-    flex: 1 1 calc(50% - 8px); /* Расти, сжиматься, базовая ширина ~50% */
-    box-sizing: border-box;    /* Учитываем padding и border в расчете ширины */
+body {
+    background-color: var(--main-bg-color);
+    color: var(--main-text-color);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    box-sizing: border-box;
 }
 
-.card h2 {
-    margin-top: 0;
-    font-size: 14px; /* Уменьшим заголовок */
-    color: #a9b3be; /* var(--tg-theme-hint-color); */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-.card p {
-    margin-bottom: 0;
-    font-size: 22px; /* Уменьшим основной текст */
-    font-weight: 600;
+/* =================================
+   Стили хедера
+   ================================= */
+header {
+    margin-bottom: 20px;
+    position: relative;
 }
 
-/* --- Стили для вкладок --- */
+header h1 {
+    font-size: 28px;
+    margin: 0 0 5px 0;
+}
+
+header .subtitle {
+    font-size: 16px;
+    color: var(--main-hint-color);
+    margin: 0;
+}
+
+#refresh-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--main-hint-color);
+    opacity: 0.7;
+    transition: transform 0.3s ease;
+}
+
+#refresh-button:active {
+    transform: rotate(180deg);
+}
+
+/* =================================
+   Стили вкладок
+   ================================= */
 .tabs-nav {
     display: flex;
     flex-wrap: nowrap;
     gap: 10px;
     margin-bottom: 20px;
-    overflow-x: auto; /* Горизонтальный скролл, если вкладок много */
-    padding-bottom: 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 10px; /* Место для скроллбара */
 }
 
 .tab-button {
     padding: 10px 15px;
-    border: 1px solid #3e4f60;
+    border: 1px solid var(--main-hint-color);
     background-color: transparent;
-    color: #a9b3be;
+    color: var(--main-hint-color);
     border-radius: 20px;
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    white-space: nowrap; /* Текст на кнопке не переносится */
+    white-space: nowrap;
     transition: all 0.2s ease;
 }
 
 .tab-button.active {
-    background-color: #5288c1; /* Цвет активной вкладки */
-    color: #ffffff;
-    border-color: #5288c1;
+    background-color: var(--main-button-color);
+    color: var(--main-button-text-color);
+    border-color: var(--main-button-color);
 }
 
 .tab-content {
-    display: none; /* Прячем все панели по умолчанию */
+    display: none;
 }
 
 .tab-content.active {
-    display: block; /* Показываем только активную */
+    display: block;
+}
+
+/* =================================
+   Стили для блоков-контейнеров
+   ================================= */
+.metrics, .ai-analysis, .chart-container {
+    background-color: var(--main-secondary-bg-color);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.metrics h2, .ai-analysis h2, .chart-container h2 {
+    margin-top: 0;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+/* =================================
+   Сетка для карточек метрик
+   ================================= */
+.metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 0; /* Убираем паддинг у контейнера метрик */
+    background: none; /* Убираем фон у контейнера метрик */
+}
+
+.card {
+    background-color: var(--main-secondary-bg-color);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    flex: 1 1 calc(50% - 8px); /* Сетка 2x2 */
+    box-sizing: border-box;
+}
+
+.card h2 {
+    font-size: 14px;
+    color: var(--main-hint-color);
+    margin-bottom: 8px;
+}
+
+.card p {
+    margin-bottom: 0;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+/* Стили для скроллбара вкладок (опционально) */
+.tabs-nav::-webkit-scrollbar {
+    height: 4px;
+}
+.tabs-nav::-webkit-scrollbar-thumb {
+    background: #3e4f60;
+    border-radius: 2px;
 }
