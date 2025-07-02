@@ -15,6 +15,7 @@ function loadData() {
     fetch(webhookUrl)
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             updateDashboard(data);
             document.querySelector('.metrics').style.opacity = '1';
         })
