@@ -32,7 +32,7 @@ function loadData() {
 
 function updateDashboard(data) {
     // data - это теперь наш объект { latest: {...}, ai_analysis: "..." }
-    const latestEntry = data.latest; 
+    const latestEntry = JSON.parse(data.latest); 
 
     if (latestEntry) {
         // Заполняем карточки
