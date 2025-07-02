@@ -1,5 +1,5 @@
-// Ссылка на бэкенд (Netlify-функция или прямой URL n8n)
-const webhookUrl = '/.netlify/functions/get-data'; 
+// Ссылка на бэкенд
+const webhookUrl = '/.netlify/functions/get-data';
 
 // Глобальная переменная для хранения экземпляра графика
 let spendChartInstance = null;
@@ -7,7 +7,7 @@ let spendChartInstance = null;
 document.addEventListener('DOMContentLoaded', () => {
     Telegram.WebApp.ready();
     document.getElementById('refresh-button').addEventListener('click', loadData);
-    loadData(); // Запускаем загрузку при первом открытии
+    loadData();
 });
 
 function loadData() {
@@ -19,7 +19,6 @@ function loadData() {
     fetch(webhookUrl)
         .then(response => response.json())
         .then(data => {
-            // data - это теперь массив объектов, по одному на каждый день
             updateDashboard(data);
             document.querySelector('.metrics').style.opacity = '1';
             document.querySelector('.chart-container').style.opacity = '1';
@@ -31,11 +30,21 @@ function loadData() {
 }
 
 function updateDashboard(data) {
-    // Сортируем данные по дате на случай, если они пришли вразнобой
-    data.sort((a, b) => new Date(a.dateStart) - new Date(b.dateStart));
+    // НОВОЕ ИЗМЕНЕНИЕ: Проверяем, является ли data массивом. Если нет, делаем из него массив.
+    const dataArray = Array.isArray(data) ? data : [data];
+
+    // Проверяем, есть ли вообще данные
+    if (dataArray.length === 0 || !dataArray[0]) {
+        document.getElementById('ai-recommendation').innerText = "Нет данных за вчерашний день.";
+        // Можно также скрыть/очистить другие поля
+        return; 
+    }
+
+    // Сортируем данные по дате
+    dataArray.sort((a, b) => new Date(a.dateStart) - new Date(b.dateStart));
 
     // Для верхних карточек берем данные из самой последней записи
-    const latestEntry = data[data.length - 1]; 
+    const latestEntry = dataArray[dataArray.length - 1]; 
     
     if (latestEntry) {
         // Заполняем карточки
@@ -44,33 +53,28 @@ function updateDashboard(data) {
         document.getElementById('ctr-value').innerText = parseFloat(latestEntry.ctr || 0).toFixed(2);
         document.getElementById('cpc-value').innerText = parseFloat(latestEntry.cpc || 0).toFixed(2);
         
-        // Заполняем блок с анализом от AI
         document.getElementById('ai-recommendation').innerText = latestEntry.aiAnalysis || "Нет данных.";
         
-        // Устанавливаем дату отчета
         const reportDate = new Date(latestEntry.reportDate);
         document.getElementById('report-date').innerText = reportDate.toLocaleDateString('ru-RU');
     }
     
-    // А весь массив данных за 7 дней передаем в функцию отрисовки графика
-    renderChart(data); 
+    // Весь массив данных передаем в функцию отрисовки графика
+    renderChart(dataArray); 
 }
 
 
 function renderChart(historyData) {
-    // Если график уже существует, уничтожаем его, чтобы перерисовать
     if (spendChartInstance) {
         spendChartInstance.destroy();
     }
-
     const ctx = document.getElementById('spend-chart').getContext('2d');
     
-    // Готовим данные для графика
     const labels = historyData.map(item => new Date(item.dateStart).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }));
     const dataPoints = historyData.map(item => parseFloat(item.spend || 0));
 
     spendChartInstance = new Chart(ctx, {
-        type: 'line', // Тип графика - линия
+        type: 'line',
         data: {
             labels: labels,
             datasets: [{
@@ -85,9 +89,7 @@ function renderChart(historyData) {
         options: {
             responsive: true,
             scales: {
-                y: {
-                    beginAtZero: true
-                }
+                y: { beginAtZero: true }
             }
         }
     });
