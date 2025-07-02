@@ -11,86 +11,88 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function loadData() {
-    const statusElement = document.getElementById('ai-recommendation');
-    statusElement.innerText = 'Загружаю свежие данные и анализ...';
-    document.querySelector('.metrics').style.opacity = '0.5';
-    document.querySelector('.chart-container').style.opacity = '0.5';
+    const tabsNav = document.getElementById('tabs-nav');
+    const tabsContent = document.getElementById('tabs-content');
+    tabsNav.innerHTML = '<p>Загружаю данные...</p>';
+    tabsContent.innerHTML = '';
+
 
     fetch(webhookUrl)
         .then(response => response.json())
         .then(data => {
-            updateDashboard(data);
-            document.querySelector('.metrics').style.opacity = '1';
-            document.querySelector('.chart-container').style.opacity = '1';
+            // Убеждаемся, что data - это массив
+            const dataArray = Array.isArray(data) ? data : [data];
+            updateDashboard(dataArray);
         })
         .catch(error => {
             console.error('Ошибка при загрузке данных:', error);
-            statusElement.innerText = 'Не удалось загрузить данные с сервера.';
+            tabsNav.innerHTML = '<p>Не удалось загрузить данные с сервера.</p>';
         });
 }
 
-function updateDashboard(data) {
-    // НОВОЕ ИЗМЕНЕНИЕ: Проверяем, является ли data массивом. Если нет, делаем из него массив.
-    const dataArray = Array.isArray(data) ? data : [data];
+function updateDashboard(dataArray) {
+    const tabsNav = document.getElementById('tabs-nav');
+    const tabsContent = document.getElementById('tabs-content');
+    
+    // Очищаем контейнеры
+    tabsNav.innerHTML = '';
+    tabsContent.innerHTML = '';
 
-    // Проверяем, есть ли вообще данные
     if (dataArray.length === 0 || !dataArray[0]) {
-        document.getElementById('ai-recommendation').innerText = "Нет данных за вчерашний день.";
-        // Можно также скрыть/очистить другие поля
-        return; 
-    }
-
-    // Сортируем данные по дате
-    dataArray.sort((a, b) => new Date(a.dateStart) - new Date(b.dateStart));
-
-    // Для верхних карточек берем данные из самой последней записи
-    const latestEntry = dataArray[dataArray.length - 1]; 
-    
-    if (latestEntry) {
-        // Заполняем карточки
-        document.getElementById('spend-value').innerText = parseFloat(latestEntry.spend || 0).toFixed(2);
-        document.getElementById('clicks-value').innerText = latestEntry.clicks || 0;
-        document.getElementById('ctr-value').innerText = parseFloat(latestEntry.ctr || 0).toFixed(2);
-        document.getElementById('cpc-value').innerText = parseFloat(latestEntry.cpc || 0).toFixed(2);
-        
-        document.getElementById('ai-recommendation').innerText = latestEntry.aiAnalysis || "Нет данных.";
-        
-        const reportDate = new Date(latestEntry.reportDate);
-        document.getElementById('report-date').innerText = reportDate.toLocaleDateString('ru-RU');
+        tabsNav.innerHTML = '<p>Нет данных за выбранный период.</p>';
+        return;
     }
     
-    // Весь массив данных передаем в функцию отрисовки графика
-    renderChart(dataArray); 
-}
-
-
-function renderChart(historyData) {
-    if (spendChartInstance) {
-        spendChartInstance.destroy();
-    }
-    const ctx = document.getElementById('spend-chart').getContext('2d');
+    // Сортируем данные по названию кампании, чтобы вкладки были в одном порядке
+    dataArray.sort((a, b) => a.campaignName.localeCompare(b.campaignName));
     
-    const labels = historyData.map(item => new Date(item.dateStart).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }));
-    const dataPoints = historyData.map(item => parseFloat(item.spend || 0));
+    // Устанавливаем общую дату отчета по последней записи
+    const lastReportDate = new Date(dataArray[dataArray.length - 1].reportDate);
+    document.getElementById('report-date').innerText = lastReportDate.toLocaleDateString('ru-RU');
 
-    spendChartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Потрачено ($)',
-                data: dataPoints,
-                fill: true,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
+    // Создаем вкладки и их содержимое
+    dataArray.forEach((campaignData, index) => {
+        // Создаем кнопку-вкладку
+        const tabButton = document.createElement('button');
+        tabButton.className = 'tab-button';
+        tabButton.dataset.tabId = `tab-${index}`;
+        tabButton.innerText = campaignData.campaignName || `Кампания ${index + 1}`;
+        tabsNav.appendChild(tabButton);
+
+        // Создаем панель с контентом для вкладки
+        const tabContent = document.createElement('div');
+        tabContent.className = 'tab-content';
+        tabContent.id = `tab-${index}`;
+        tabContent.innerHTML = `
+            <section class="metrics">
+                <div class="card"><h2>Потрачено</h2><p><span>${parseFloat(campaignData.spend || 0).toFixed(2)}</span> $</p></div>
+                <div class="card"><h2>Клики</h2><p>${campaignData.clicks || 0}</p></div>
+                <div class="card"><h2>CTR</h2><p><span>${parseFloat(campaignData.ctr || 0).toFixed(2)}</span> %</p></div>
+                <div class="card"><h2>CPC</h2><p><span>${parseFloat(campaignData.cpc || 0).toFixed(2)}</span> $</p></div>
+            </section>
+            <section class="ai-analysis">
+                <h2>🤖 Рекомендация от AI</h2>
+                <p>${campaignData.aiAnalysis || "Нет данных."}</p>
+            </section>
+        `;
+        tabsContent.appendChild(tabContent);
+
+        // Добавляем обработчик клика на кнопку
+        tabButton.addEventListener('click', () => {
+            // Убираем класс 'active' у всех кнопок и панелей
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Добавляем класс 'active' нужной кнопке и панели
+            tabButton.classList.add('active');
+            tabContent.classList.add('active');
+        });
     });
+
+    // Делаем первую вкладку активной по умолчанию
+    if (tabsNav.children.length > 0) {
+        tabsNav.children[0].click();
+    }
+    
+    // График пока не трогаем, чтобы не усложнять. Его можно добавить позже.
 }
