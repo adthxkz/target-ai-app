@@ -26,7 +26,7 @@ function loadData() {
 }
 
 function updateDashboard(data) {
-    const latestEntry = data.latest;
+    const latestEntry = JSON.parse(data.latest);
     if (latestEntry) {
         // Заполняем карточки
         document.getElementById('spend-value').innerText = parseFloat(latestEntry.spend).toFixed(2);
