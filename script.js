@@ -31,19 +31,29 @@ function loadData() {
 }
 
 function updateDashboard(data) {
-    // data - это теперь наш объект { latest: {...}, ai_analysis: "..." }
-    const latestEntry = JSON.parse(data.latest); 
+    // Сортируем данные по дате на случай, если они пришли вразнобой
+    data.sort((a, b) => new Date(a.dateStart) - new Date(b.dateStart));
 
+    // Для верхних карточек берем данные из самой последней записи
+    const latestEntry = data[data.length - 1]; 
+    
     if (latestEntry) {
         // Заполняем карточки
-        document.getElementById('spend-value').innerText = parseFloat(latestEntry.spend).toFixed(2);
-        document.getElementById('clicks-value').innerText = latestEntry.clicks;
-        document.getElementById('ctr-value').innerText = parseFloat(latestEntry.ctr).toFixed(2);
-        document.getElementById('cpc-value').innerText = parseFloat(latestEntry.cpc).toFixed(2);
-
+        document.getElementById('spend-value').innerText = parseFloat(latestEntry.spend || 0).toFixed(2);
+        document.getElementById('clicks-value').innerText = latestEntry.clicks || 0;
+        document.getElementById('ctr-value').innerText = parseFloat(latestEntry.ctr || 0).toFixed(2);
+        document.getElementById('cpc-value').innerText = parseFloat(latestEntry.cpc || 0).toFixed(2);
+        
         // Заполняем блок с анализом от AI
-        document.getElementById('ai-recommendation').innerText = data.ai_analysis;
+        document.getElementById('ai-recommendation').innerText = latestEntry.aiAnalysis || "Нет данных.";
+        
+        // Устанавливаем дату отчета
+        const reportDate = new Date(latestEntry.reportDate);
+        document.getElementById('report-date').innerText = reportDate.toLocaleDateString('ru-RU');
     }
+    
+    // А весь массив данных за 7 дней передаем в функцию отрисовки графика
+    renderChart(data); 
 }
 
 
